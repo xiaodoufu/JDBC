@@ -32,26 +32,82 @@ public class JdbcDemo {
 	static Scanner input = new Scanner(System.in);
 
 	public static void main(String[] args) {
-		System.out.println("请输入您的选择：");
-		System.out.print("1：查询所有用户信息\t\t");
-		System.out.print("2：增加用户信息\t\t");
-		System.out.print("3：删除用户信息\t\t");
-		System.out.print("4：修改用户信息\t\t");
-		int choose = input.nextInt();
-		switch (choose) {
-		case 1:
-			selectAllUsers();// 查询所有用户信息
-			break;
-		case 2:
-			insertUser();// 增加用户信息
-			break;
-		case 3:
-			deleteUser();// 删除用户信息
-			break;
-		case 4:
-			updateUser();// 修改用户信息
-			break;
+		boolean flag = loginUser();
+		if (flag) {
+			System.out.print("1：查询所有用户信息\t\t");
+			System.out.print("2：增加用户信息\t\t");
+			System.out.print("3：删除用户信息\t\t");
+			System.out.print("4：修改用户信息\t\n");
+			System.out.println("请输入您的选择：");
+			int choose = input.nextInt();
+			switch (choose) {
+			case 1:
+				selectAllUsers();// 查询所有用户信息
+				break;
+			case 2:
+				insertUser();// 增加用户信息
+				break;
+			case 3:
+				deleteUser();// 删除用户信息
+				break;
+			case 4:
+				updateUser();// 修改用户信息
+				break;
+			}
+		} else {
+			System.out.println("登录失败！");
 		}
+
+	}
+
+	/**
+	 * 用户登录的方法
+	 */
+	private static boolean loginUser() {
+		System.out.println("请输入您的登录名称：");
+		String loginName = input.next();
+		System.out.println("请输入您的登录密码：");
+		String password = input.next();
+		// 定义一个标记 记录用户是否登录成功
+		boolean flag = false;
+		Connection con = null; // 连接对象
+		Statement stmt = null; // 执行sql语句的对象
+		ResultSet rs = null; // 返回的结果集
+		try {
+			// 1.使用反射机制加载驱动包
+			Class.forName("com.mysql.jdbc.Driver");
+			// 2.创建与数据库的连接
+			con = DriverManager
+					.getConnection(
+							"jdbc:mysql://localhost:3306/easybuy?useUnicode=true&characterEncoding=utf8",
+							"root", "");
+			// 3.1 书写sql 先在dbms中运行一次
+			String sql = "SELECT loginName,password FROM easybuy_user where loginName='"
+					+ loginName + "' and password='" + password + "'";
+			// 3.2 执行sql
+			stmt = con.createStatement();
+			// 4.1 得到结果集
+			rs = stmt.executeQuery(sql);
+			// 4.2 处理结果集
+			if (rs.next()) { // 证明有用户
+				flag = true;
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// 5.释放资源
+			try {
+				rs.close();
+				stmt.close();
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return flag;
 
 	}
 

@@ -96,6 +96,10 @@ JdbcDemo存在的问题：
   03.sql语句的执行是使用的Statement,不安全，性能低
              可以sql注入   
              没有对sql语句进行预编译
+     我们loginUser()中的password 写成  aaa'or'1'='1 也可以登录！
+     
+     
+            
   
 
 
