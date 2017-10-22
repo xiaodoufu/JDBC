@@ -84,7 +84,7 @@ JDBC连接数据库的步骤
  02.建立连接 需要四要素              Connection con=DriverManager.getConnection(url,userName,password)
  03.书写sql并执行                       PreparedStatement 或者Statement
  04.处理结果集                             ResultSet(查询)  int(增删改)
- 05.释放资源                                 先开的后关
+ 05.释放资源                                先开的后关
 
 
 
@@ -98,6 +98,32 @@ JdbcDemo存在的问题：
              没有对sql语句进行预编译
      我们loginUser()中的password 写成  aaa'or'1'='1 也可以登录！
      
+     
+     
+ 在com.xdf.pre包中的   JdbcDemo中优化代码
+ 
+  优化步骤
+  一：优化JDBC API
+	  01.将5个方法中的JDBC API提取成全局变量
+	  02.把所有使用到Statement的位置替换成PreparedStatement(防止sql注入)
+	      Statement和PreparedStatement区别
+	      01.Statement不能预编译sql语句，而PreparedStatement可以
+	      02.Statement可以sql注入，PreparedStatement不允许
+	      03.Statement在sql语句中的参数设置只能通过变量的拼接实现
+	         PreparedStatement也可以使用占位符的方式实现（必须使用）
+	      04.Statement在通过connecetion.createStatement()不需要sql作为参数
+	         Statement在执行sql语句的时候，需要sql作为参数！
+	        PreparedStatement在通过connecetion.prepareStatement(sql)需要sql作为参数
+	        PreparedStatement在执行sql语句的时候，不需要sql作为参数！
+	  03.把sql语句中所有使用变量的地方换成占位符 （?）
+	  04.给占位符赋值
+  
+ 问题？
+ 01.我们整个类的操作都是基于user表的 ，如果右来了一个Animal类？
+        那么我们是不是也得右对应的增删改查一些列方法
+ 02.而且我们的加载驱动，以及获取数据库链接和释放资源的代码 还没有优化？       
+        
+    
      
             
   
