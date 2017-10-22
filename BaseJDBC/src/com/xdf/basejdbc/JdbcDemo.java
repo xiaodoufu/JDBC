@@ -46,13 +46,118 @@ public class JdbcDemo {
 			insertUser();// 增加用户信息
 			break;
 		case 3:
-			selectAllUsers();// 查询所有用户信息
+			deleteUser();// 删除用户信息
 			break;
 		case 4:
-			selectAllUsers();// 查询所有用户信息
+			updateUser();// 修改用户信息
 			break;
 		}
 
+	}
+
+	/**
+	 * 删除用户信息
+	 */
+	private static void deleteUser() {
+		// 获取用户的输入
+		System.out.println("请您输入真实姓名：");
+		String userName = input.next();
+
+		Connection con = null; // 连接对象
+		Statement stmt = null; // 执行sql语句的对象
+		ResultSet rs = null; // 返回结果集
+		try {
+			// 1.使用反射机制加载驱动包
+			Class.forName("com.mysql.jdbc.Driver");
+			// 2.创建与数据库的连接
+			con = DriverManager
+					.getConnection(
+							"jdbc:mysql://localhost:3306/easybuy?useUnicode=true&characterEncoding=utf8",
+							"root", "");
+			// 3.1 书写sql 先在dbms中运行一次
+			String sql = "DELETE FROM easybuy_user WHERE userName='" + userName
+					+ "'";
+			// 3.2通过连接获取Statement对象
+			stmt = con.createStatement();
+			// 3.3Statement执行sql
+			int rowNum = stmt.executeUpdate(sql); // rowNum===》sql语句对数据库中数据的影响行数
+			if (rowNum > 0) { // 证明删除成功
+				System.out.println("删除成功");
+			} else {
+				System.out.println("删除失败");
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// 5.释放资源
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				stmt.close();
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	/**
+	 *  修改用户信息
+	 *    根据 真实姓名  修改对应的  登录名和密码
+	 */
+	private static void updateUser() {
+		// 获取用户的输入
+		System.out.println("请您输入真实姓名：");
+		String userName = input.next();
+		System.out.println("请您输入新昵称（登录名）：");
+		String loginName = input.next();
+		System.out.println("请您输入新密码：");
+		String password = input.next();
+
+		Connection con = null; // 连接对象
+		Statement stmt = null; // 执行sql语句的对象
+		ResultSet rs = null; // 返回结果集
+		try {
+			// 1.使用反射机制加载驱动包
+			Class.forName("com.mysql.jdbc.Driver");
+			// 2.创建与数据库的连接
+			con = DriverManager
+					.getConnection(
+							"jdbc:mysql://localhost:3306/easybuy?useUnicode=true&characterEncoding=utf8",
+							"root", "");
+			// 3.1 书写sql 先在dbms中运行一次
+			String sql = "UPDATE  easybuy_user SET loginName='" + loginName
+					+ "',`password`='" + password + "' WHERE userName='"
+					+ userName + "'";
+			// 3.2通过连接获取Statement对象
+			stmt = con.createStatement();
+			// 3.3Statement执行sql
+			int rowNum = stmt.executeUpdate(sql); // rowNum===》sql语句对数据库中数据的影响行数
+			if (rowNum > 0) { // 证明修改成功
+				System.out.println("修改成功");
+			} else {
+				System.out.println("修改失败");
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// 5.释放资源
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				stmt.close();
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
