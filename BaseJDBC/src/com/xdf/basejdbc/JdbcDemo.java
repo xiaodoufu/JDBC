@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Scanner;
 
 /**
  * 
@@ -20,12 +21,101 @@ import java.sql.Statement;
  * 01.把mysql数据库需要的驱动包引入到我们的项目中===》使用反射机制加载驱动包
  *     因为反射是在程序运行期间，动态的加载我们需要的类！
  *     程序在编译期间，这个类可以不在！
- * 02.创建与数据库的连接   需要四要素    
+ * 02.创建与数据库的连接   需要四要素   ，返回一个连接对象
+ * 03.书写sql语句，通过Connection获取Statement
+ * 04.Statement执行sql语句（查询）返回结果集
+ * 05.处理ResultSet
+ * 06.释放资源
  * 
  */
 public class JdbcDemo {
+	static Scanner input = new Scanner(System.in);
 
 	public static void main(String[] args) {
+		System.out.println("请输入您的选择：");
+		System.out.print("1：查询所有用户信息\t\t");
+		System.out.print("2：增加用户信息\t\t");
+		System.out.print("3：删除用户信息\t\t");
+		System.out.print("4：修改用户信息\t\t");
+		int choose = input.nextInt();
+		switch (choose) {
+		case 1:
+			selectAllUsers();// 查询所有用户信息
+			break;
+		case 2:
+			insertUser();// 增加用户信息
+			break;
+		case 3:
+			selectAllUsers();// 查询所有用户信息
+			break;
+		case 4:
+			selectAllUsers();// 查询所有用户信息
+			break;
+		}
+
+	}
+
+	/**
+	 * 新增用户
+	 */
+	private static void insertUser() {
+		// 获取用户的输入
+		System.out.println("请您输入登录名称：");
+		String loginName = input.next();
+		System.out.println("请您输入登录密码：");
+		String password = input.next();
+		System.out.println("请您输入真实姓名：");
+		String userName = input.next();
+		System.out.println("请您输入性别：(1/男   0/女)");
+		int sex = input.nextInt();
+
+		Connection con = null; // 连接对象
+		Statement stmt = null; // 执行sql语句的对象
+		try {
+			// 1.使用反射机制加载驱动包
+			Class.forName("com.mysql.jdbc.Driver");
+			// 2.创建与数据库的连接
+			con = DriverManager
+					.getConnection(
+							"jdbc:mysql://localhost:3306/easybuy?useUnicode=true&characterEncoding=utf8",
+							"root", "");
+			// 3.1 书写sql 先在dbms中运行一次
+			String sql = "INSERT  INTO easybuy_user(loginname,userName,`password`,sex)"
+					+ " VALUES('"
+					+ loginName
+					+ "','"
+					+ userName
+					+ "','"
+					+ password + "'," + sex + ")";
+			// 3.2通过连接获取Statement对象
+			stmt = con.createStatement();
+			// 3.3Statement执行sql
+			int rowNum = stmt.executeUpdate(sql); // rowNum===》sql语句对数据库中数据的影响行数
+			if (rowNum > 0) { // 证明新增成功
+				System.out.println("新增成功");
+			} else {
+				System.out.println("新增失败");
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			// 5.释放资源
+			try {
+				stmt.close();
+				con.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	/**
+	 * 查询所有的用户信息
+	 */
+	public static void selectAllUsers() {
 		Connection con = null; // 连接对象
 		Statement stmt = null; // 执行sql语句的对象
 		ResultSet rs = null; // 返回的结果集
@@ -37,7 +127,7 @@ public class JdbcDemo {
 					.getConnection(
 							"jdbc:mysql://localhost:3306/easybuy?useUnicode=true&characterEncoding=utf8",
 							"root", "");
-			// 3.1 书写sql 现在dbms中运行一次
+			// 3.1 书写sql 先在dbms中运行一次
 			String sql = "SELECT * FROM easybuy_user";
 			// 3.2 执行sql
 			stmt = con.createStatement();
@@ -78,7 +168,6 @@ public class JdbcDemo {
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 }
