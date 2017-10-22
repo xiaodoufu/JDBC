@@ -1,13 +1,8 @@
 package com.xdf.jdbcpro;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Scanner;
 
-import com.xdf.util.ConfigManager;
+import com.xdf.util.BaseDao;
 
 /**
  * 
@@ -16,11 +11,7 @@ import com.xdf.util.ConfigManager;
  * @author 小葱拌豆腐
  * 2017-10-19上午11:54:03
  */
-public class JdbcDemo {
-	static Scanner input = new Scanner(System.in);
-	static Connection con = null; // 连接对象
-	static PreparedStatement stmt = null; // 执行sql语句的对象
-	static ResultSet rs = null; // 返回的结果集
+public class JdbcDemo extends BaseDao {
 
 	public static void main(String[] args) {
 		boolean flag = loginUser();
@@ -62,13 +53,7 @@ public class JdbcDemo {
 		// 定义一个标记 记录用户是否登录成功
 		boolean flag = false;
 		try {
-			// 1.使用反射机制加载驱动包
-			Class.forName(ConfigManager.getInstance().getValue("jdbc.driver"));
-			// 2.创建与数据库的连接
-			con = DriverManager.getConnection(ConfigManager.getInstance()
-					.getValue("jdbc.url"), ConfigManager.getInstance()
-					.getValue("jdbc.userName"), ConfigManager.getInstance()
-					.getValue("jdbc.password"));
+			getConnection(); // 调用父类的获取连接的方法 先不优化！！！！
 			// 3.1 书写sql 先在dbms中运行一次
 			String sql = "SELECT loginName,password FROM easybuy_user where loginName=? and password=?";
 			// 3.2 执行sql
@@ -82,8 +67,6 @@ public class JdbcDemo {
 			if (rs.next()) { // 证明有用户
 				flag = true;
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -110,13 +93,7 @@ public class JdbcDemo {
 		String userName = input.next();
 
 		try {
-			// 1.使用反射机制加载驱动包
-			Class.forName(ConfigManager.getInstance().getValue("jdbc.driver"));
-			// 2.创建与数据库的连接
-			con = DriverManager.getConnection(ConfigManager.getInstance()
-					.getValue("jdbc.url"), ConfigManager.getInstance()
-					.getValue("jdbc.userName"), ConfigManager.getInstance()
-					.getValue("jdbc.password"));
+			getConnection(); // 调用父类的获取连接的方法 先不优化！！！！
 			// 3.1 书写sql 先在dbms中运行一次
 			String sql = "DELETE FROM easybuy_user WHERE userName=?";
 			// 3.2通过连接获取Statement对象
@@ -130,8 +107,6 @@ public class JdbcDemo {
 			} else {
 				System.out.println("删除失败");
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -163,13 +138,7 @@ public class JdbcDemo {
 		String password = input.next();
 
 		try {
-			// 1.使用反射机制加载驱动包
-			Class.forName(ConfigManager.getInstance().getValue("jdbc.driver"));
-			// 2.创建与数据库的连接
-			con = DriverManager.getConnection(ConfigManager.getInstance()
-					.getValue("jdbc.url"), ConfigManager.getInstance()
-					.getValue("jdbc.userName"), ConfigManager.getInstance()
-					.getValue("jdbc.password"));
+			getConnection(); // 调用父类的获取连接的方法 先不优化！！！！
 			// 3.1 书写sql 先在dbms中运行一次
 			String sql = "UPDATE  easybuy_user SET loginName=?,`password`=?  WHERE userName=?";
 			// 3.2通过连接获取Statement对象
@@ -185,8 +154,6 @@ public class JdbcDemo {
 			} else {
 				System.out.println("修改失败");
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -218,13 +185,7 @@ public class JdbcDemo {
 		int sex = input.nextInt();
 
 		try {
-			// 1.使用反射机制加载驱动包
-			Class.forName(ConfigManager.getInstance().getValue("jdbc.driver"));
-			// 2.创建与数据库的连接
-			con = DriverManager.getConnection(ConfigManager.getInstance()
-					.getValue("jdbc.url"), ConfigManager.getInstance()
-					.getValue("jdbc.userName"), ConfigManager.getInstance()
-					.getValue("jdbc.password"));
+			getConnection(); // 调用父类的获取连接的方法 先不优化！！！！
 			// 3.1 书写sql 先在dbms中运行一次
 			String sql = "INSERT  INTO easybuy_user(loginname,userName,`password`,sex)"
 					+ " VALUES(?,?,?,?)";
@@ -242,8 +203,6 @@ public class JdbcDemo {
 			} else {
 				System.out.println("新增失败");
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -263,13 +222,7 @@ public class JdbcDemo {
 	 */
 	public static void selectAllUsers() {
 		try {
-			// 1.使用反射机制加载驱动包
-			Class.forName(ConfigManager.getInstance().getValue("jdbc.driver"));
-			// 2.创建与数据库的连接
-			con = DriverManager.getConnection(ConfigManager.getInstance()
-					.getValue("jdbc.url"), ConfigManager.getInstance()
-					.getValue("jdbc.userName"), ConfigManager.getInstance()
-					.getValue("jdbc.password"));
+			getConnection(); // 调用父类的获取连接的方法 先不优化！！！！
 			// 3.1 书写sql 先在dbms中运行一次
 			String sql = "SELECT * FROM easybuy_user";
 			// 3.2 执行sql
@@ -297,8 +250,6 @@ public class JdbcDemo {
 				System.out.println("手机号：" + mobile);
 				System.out.println("用户类型：" + type);
 			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
