@@ -8,6 +8,7 @@ import java.util.List;
 import com.xdf.bean.Easybuy_User;
 import com.xdf.dao.UserDao;
 import com.xdf.util.BaseDao;
+import com.xdf.util.ResultSetUtil;
 
 /**
  * 
@@ -107,33 +108,14 @@ public class UserDaoImpl extends BaseDao implements UserDao {
 	public List<Easybuy_User> findAll(Object... objects) {
 		// 创建集合用于保存所有的用户
 		List<Easybuy_User> lists = new ArrayList<>();
-		try {
-			// 书写sql 先在dbms中运行一次
-			String sql = "SELECT * FROM easybuy_user";
-			// 得到结果集
-			rs = executeQuery(sql);
-			// 处理结果集
-			while (rs.next()) {
-				// 创建单个用户对象
-				Easybuy_User user = new Easybuy_User();
-				user.setId(rs.getInt("id"));
-				user.setLoginName(rs.getString("loginName"));
-				user.setUserName(rs.getString("userName"));
-				user.setPassword(rs.getString("password"));
-				user.setSex(rs.getInt("sex"));
-				user.setIdentityCode(rs.getString("identityCode"));
-				user.setEmail(rs.getString("email"));
-				user.setMobile(rs.getString("mobile"));
-				user.setType(rs.getInt("type"));
-				// 向集合中增加元素
-				lists.add(user);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			// 5.释放资源
-			closeConnection();
-		}
+		// 书写sql 先在dbms中运行一次
+		String sql = "SELECT * FROM easybuy_user";
+		// 得到结果集
+		rs = executeQuery(sql);
+		// 从工具类中获取
+		lists = ResultSetUtil.eachResultSet(rs, Easybuy_User.class);
+		// 释放资源
+		closeConnection();
 		return lists;
 	}
 

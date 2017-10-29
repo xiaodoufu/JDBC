@@ -1,7 +1,6 @@
 package com.xdf.dao.impl;
 
 import java.io.Serializable;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +8,7 @@ import java.util.List;
 import com.xdf.bean.Easybuy_News;
 import com.xdf.dao.NewsDao;
 import com.xdf.util.BaseDao;
+import com.xdf.util.ResultSetUtil;
 
 /**
  * 
@@ -71,20 +71,8 @@ public class NewsDaoImpl extends BaseDao implements NewsDao {
 
 		String sql = "select * from easybuy_news";
 		rs = executeQuery(sql);
-		try {
-			while (rs.next()) {
-				Easybuy_News news = new Easybuy_News();
-				news.setId(rs.getInt("id"));
-				news.setContent(rs.getString("content"));
-				news.setTitle(rs.getString("title"));
-				news.setCreateTime(rs.getTimestamp("createTime"));
-				lists.add(news);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeConnection();
-		}
+		lists = ResultSetUtil.eachResultSet(rs, Easybuy_News.class);
+		closeConnection();
 		return lists;
 	}
 
