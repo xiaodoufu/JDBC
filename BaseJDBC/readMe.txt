@@ -4,7 +4,7 @@ JDBC:(Java  DataBase  Connectivity,java数据库连接)
    03.不同的数据库厂商提供了不同的数据库驱动
  
 JDBC和ODBC
-
+   
 JDBC：
    01.完全是java语言编写
    02.性能高，跨平台
