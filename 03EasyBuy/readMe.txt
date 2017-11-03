@@ -7,6 +7,6 @@ Dao 模式
 05.创建com.xdf.service.NewsService 接口
 06.创建com.xdf.service.impl.NewsServiceImpl   service实现类
 07.创建 测试类  UI
-
+  
 
 我们所有的查询返回结果集都是List<T>!
